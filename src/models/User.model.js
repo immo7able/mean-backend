@@ -8,6 +8,9 @@ const userSchema = new mongoose.Schema(
       required: true,
       unique: true,
       trim: true,
+      minlength: 3,
+      maxlength: 30,
+      match: [/^[a-zA-Z0-9]+$/, 'Username must be alphanumeric'],
     },
     email: {
       type: String,
@@ -15,6 +18,10 @@ const userSchema = new mongoose.Schema(
       unique: true,
       trim: true,
       lowercase: true,
+      match: [
+        /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/,
+        'Invalid email format',
+      ],
     },
     password: {
       type: String,
