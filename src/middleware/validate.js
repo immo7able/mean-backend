@@ -37,3 +37,32 @@ export const validateLogin = (req, res, next) => {
   if (error) return next(error)
   next()
 }
+
+const basePostSchema = {
+  content: Joi.string()
+      .min(1)
+      .max(1000)
+      .required()
+      .error(new ApiError(400, 'Content must be between 1 and 1000 characters')),
+}
+
+const createPostSchema = Joi.object(basePostSchema)
+
+const updatePostSchema = Joi.object({
+  content: Joi.string()
+      .min(1)
+      .max(1000)
+      .error(new ApiError(400, 'Content must be between 1 and 1000 characters')),
+})
+
+export const validateCreatePost = (req, res, next) => {
+  const { error } = createPostSchema.validate(req.body)
+  if (error) return next(error)
+  next()
+}
+
+export const validateUpdatePost = (req, res, next) => {
+  const { error } = updatePostSchema.validate(req.body)
+  if (error) return next(error)
+  next()
+}

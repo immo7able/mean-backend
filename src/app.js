@@ -5,6 +5,7 @@ import morgan from 'morgan'
 import connectDB from './config/db.js'
 import authRoutes from './routes/auth.routes.js'
 import errorHandler from './middleware/errorHandler.js'
+import postRoutes from "./routes/post.routes.js";
 
 const app = express()
 
@@ -19,6 +20,7 @@ connectDB()
 
 // Routes
 app.use('/api/auth', authRoutes)
+app.use('/api/posts', postRoutes)
 
 // Обработка 404
 app.use((req, res) => {
