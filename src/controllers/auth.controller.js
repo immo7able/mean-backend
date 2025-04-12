@@ -2,6 +2,7 @@ import User from '../models/User.model.js'
 import { generateAccessToken, generateRefreshToken } from '../config/jwt.js'
 import ApiError from '../utils/ApiError.js'
 import asyncHandler from '../utils/asyncHandler.js'
+import jwt from "jsonwebtoken";
 
 export const register = asyncHandler(async (req, res) => {
   const { username, email, password } = req.body
@@ -65,4 +66,30 @@ export const refreshToken = asyncHandler(async (req, res) => {
 
   const newAccessToken = generateAccessToken(user._id)
   res.json({ accessToken: newAccessToken })
+})
+
+export const profile = asyncHandler(async (req, res) => {
+  const token = req.headers.authorization && req.headers.authorization.split(' ')[1]
+
+  if (!token) {
+    throw new ApiError(401, 'Access token required')
+  }
+
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_ACCESS_SECRET)
+
+    const user = await User.findById(decoded.userId)
+    if (!user) {
+      throw new ApiError(404, 'User not found')
+    }
+
+    // Возвращаем данные о пользователе
+    res.json({
+      _id: user._id,
+      username: user.username,
+      email: user.email,
+    })
+  } catch (error) {
+    throw new ApiError(401, 'Invalid or expired token')
+  }
 })
