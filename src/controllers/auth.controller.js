@@ -88,8 +88,9 @@ export const profile = asyncHandler(async (req, res) => {
       _id: user._id,
       username: user.username,
       email: user.email,
+      avatarUrl: user.avatarUrl
     })
   } catch (error) {
-    throw new ApiError(401, 'Invalid or expired token')
+    throw new ApiError(error.statusCode, error.message)
   }
 })

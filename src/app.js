@@ -6,6 +6,7 @@ import connectDB from './config/db.js'
 import authRoutes from './routes/auth.routes.js'
 import errorHandler from './middleware/errorHandler.js'
 import postRoutes from "./routes/post.routes.js";
+import userRoutes from "./routes/user.routes.js";
 
 const app = express()
 
@@ -21,6 +22,7 @@ connectDB()
 // Routes
 app.use('/api/auth', authRoutes)
 app.use('/api/posts', postRoutes)
+app.use('/api/user', userRoutes)
 
 // Обработка 404
 app.use((req, res) => {
