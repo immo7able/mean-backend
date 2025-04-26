@@ -44,6 +44,7 @@ const basePostSchema = {
       .max(1000)
       .required()
       .error(new ApiError(400, 'Content must be between 1 and 1000 characters')),
+  imageUrl: Joi.string()
 }
 
 const createPostSchema = Joi.object(basePostSchema)
@@ -53,6 +54,7 @@ const updatePostSchema = Joi.object({
       .min(1)
       .max(1000)
       .error(new ApiError(400, 'Content must be between 1 and 1000 characters')),
+  imageUrl: Joi.string()
 })
 
 export const validateCreatePost = (req, res, next) => {

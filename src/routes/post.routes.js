@@ -5,7 +5,7 @@ import {
     getMyPosts,
     updatePost,
     deletePost,
-    toggleLike,
+    toggleLike, getPost,
 } from '../controllers/post.controller.js'
 import { protect } from '../middleware/auth.middleware.js'
 import {validateCreatePost, validateUpdatePost} from "../middleware/validate.js";
@@ -18,5 +18,6 @@ router.get('/my', protect, getMyPosts) // Получить посты текущ
 router.patch('/:id', protect, validateUpdatePost, updatePost) // Обновить пост (только автор)
 router.delete('/:id', protect, deletePost) // Удалить пост (только автор)
 router.post('/:id/like', protect, toggleLike) // Лайк/дизлайк
+router.get('/:id', getPost) // Получить пост по айди
 
 export default router

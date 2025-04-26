@@ -14,6 +14,10 @@ const postSchema = new mongoose.Schema(
             ref: 'User',
             required: true,
         },
+        imageUrl: {
+            type: String,
+            default: null,
+        },
         likes: [
             {
                 type: mongoose.Schema.Types.ObjectId,
