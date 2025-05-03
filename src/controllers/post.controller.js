@@ -4,8 +4,12 @@ import ApiError from '../utils/ApiError.js'
 // Создание поста (только авторизованные)
 export const createPost = async (req, res, next) => {
     try {
-        const { content, imageUrl } = req.body
-        const post = await Post.create({ content, imageUrl, author: req.user._id })
+        const {content, imageUrl} = req.body
+        const post = await Post.create({
+            content,
+            imageUrl: imageUrl || null,
+            author: req.user._id
+        })
         res.status(201).json(post)
     } catch (error) {
         next(error)
@@ -15,7 +19,7 @@ export const createPost = async (req, res, next) => {
 // Получение всех постов (публичный)
 export const getAllPosts = async (req, res, next) => {
     try {
-        const posts = await Post.find().sort({ createdAt: -1 }).populate('author', 'username email')
+        const posts = await Post.find().sort({createdAt: -1}).populate('author', 'username email')
         res.json(posts)
     } catch (error) {
         next(error)
@@ -25,7 +29,7 @@ export const getAllPosts = async (req, res, next) => {
 // Получение постов текущего пользователя (только авторизованные)
 export const getMyPosts = async (req, res, next) => {
     try {
-        const posts = await Post.find({ author: req.user._id }).sort({ createdAt: -1 })
+        const posts = await Post.find({author: req.user._id}).sort({createdAt: -1})
         res.json(posts)
     } catch (error) {
         next(error)
@@ -34,7 +38,7 @@ export const getMyPosts = async (req, res, next) => {
 
 export const getPost = async (req, res, next) => {
     try {
-        const { id } = req.params
+        const {id} = req.params
         const post = await Post.findById(id)
         if (!post) throw new ApiError(404, 'Post not found')
         res.json(post)
@@ -46,8 +50,8 @@ export const getPost = async (req, res, next) => {
 // Редактирование поста (только автор)
 export const updatePost = async (req, res, next) => {
     try {
-        const { id } = req.params
-        const { content, imageUrl } = req.body
+        const {id} = req.params
+        const {content, imageUrl} = req.body
 
         const post = await Post.findById(id)
         if (!post) throw new ApiError(404, 'Post not found')
@@ -69,14 +73,14 @@ export const updatePost = async (req, res, next) => {
 // Удаление поста (только автор)
 export const deletePost = async (req, res, next) => {
     try {
-        const { id } = req.params
+        const {id} = req.params
         const post = await Post.findById(id)
         if (!post) throw new ApiError(404, 'Post not found')
 
         if (!post.author.equals(req.user._id)) throw new ApiError(403, 'Access denied')
 
         await post.deleteOne()
-        res.json({ message: 'Post deleted successfully' })
+        res.json({message: 'Post deleted successfully'})
     } catch (error) {
         next(error)
     }
@@ -85,7 +89,7 @@ export const deletePost = async (req, res, next) => {
 // Переключение лайка (только авторизованные)
 export const toggleLike = async (req, res, next) => {
     try {
-        const { id } = req.params
+        const {id} = req.params
         const post = await Post.findById(id)
         if (!post) throw new ApiError(404, 'Post not found')
 
