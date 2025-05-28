@@ -56,6 +56,7 @@ export const getMyMotorcycles = async (req, res, next) => {
         const motorcycles = await Motorcycle.find({ owner: req.user._id }).sort({ createdAt: -1 })
             .populate('brand')
             .populate('model')
+            .populate('owner', 'phoneNumber')
         res.json(motorcycles)
     } catch (error) {
         next(error)
@@ -65,6 +66,7 @@ export const getMyMotorcycles = async (req, res, next) => {
 export const getMotorcycle = async (req, res, next) => {
     try {
         const motorcycle = await Motorcycle.findById(req.params.id)
+            .populate('owner', 'phoneNumber')
             .populate('brand')
             .populate('model')
         if (!motorcycle) throw new ApiError(404, 'Motorcycle not found')

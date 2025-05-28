@@ -39,7 +39,6 @@ export const getUserChats = async (req, res, next) => {
                 select: 'username',
             })
             .sort({ updatedAt: -1 });
-
         const formattedChats = chats.map((chat) => {
             const otherUser = chat.participants.find(
                 (participant) => participant._id.toString() !== userId.toString()
