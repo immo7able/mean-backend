@@ -10,6 +10,6 @@ services:
     environment:
       MONGO_INITDB_ROOT_USERNAME: admin
       MONGO_INITDB_ROOT_PASSWORD: admin
-      MONGO_INITDB_DATABASE: social_net
+      MONGO_INITDB_DATABASE: motoapp
     volumes:
       - ./mongo-init:/docker-entrypoint-initdb.d

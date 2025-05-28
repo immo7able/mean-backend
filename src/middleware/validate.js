@@ -19,6 +19,11 @@ const registerSchema = Joi.object({
     .pattern(new RegExp('^[a-zA-Z0-9]{6,30}$'))
     .required()
     .error(new ApiError(400, 'Password must be 6-30 characters')),
+
+  phoneNumber: Joi.string()
+      .pattern(new RegExp('^\\+?[0-9]{10,15}$'))
+      .required()
+      .error(new ApiError(400, 'Invalid phone number format')),
 })
 
 const loginSchema = Joi.object({
@@ -38,33 +43,61 @@ export const validateLogin = (req, res, next) => {
   next()
 }
 
-const basePostSchema = {
-  content: Joi.string()
-      .min(1)
-      .max(1000)
-      .required()
-      .error(new ApiError(400, 'Content must be between 1 and 1000 characters')),
-  imageUrl: Joi.string().allow(null)
+const motorcycleSchema = {
+  description: Joi.string().required(),
+  price: Joi.number().required(),
+  brand: Joi.string().required(),
+  model: Joi.string().required(),
+  year: Joi.number().integer().min(1900).max(new Date().getFullYear()).required(),
+  engineVolume: Joi.number().required(),
+  mileage: Joi.number().required(),
+  images: Joi.array().items(Joi.string().uri()).required(),
+  city: Joi.string().required(),
+  isSold: Joi.boolean()
 }
 
-const createPostSchema = Joi.object(basePostSchema)
+const createMotorcycleSchema = Joi.object(motorcycleSchema)
 
-const updatePostSchema = Joi.object({
-  content: Joi.string()
-      .min(1)
-      .max(1000)
-      .error(new ApiError(400, 'Content must be between 1 and 1000 characters')),
-  imageUrl: Joi.string().allow(null)
+const updateMotorcycleSchema = Joi.object({
+  _id: Joi.any().strip(),
+  __v: Joi.any().strip(),
+  owner: Joi.any().strip(),
+  favorites: Joi.any().strip(),
+  createdAt: Joi.any().strip(),
+  updatedAt: Joi.any().strip(),
+  ...motorcycleSchema,
+}).fork(Object.keys(motorcycleSchema), field => field.optional())
+
+export const validateCreateMotorcycle = (req, res, next) => {
+  const { error } = createMotorcycleSchema.validate(req.body)
+  if (error) return next(new ApiError(400, error.message))
+  next()
+}
+
+export const validateUpdateMotorcycle = (req, res, next) => {
+  const { error } = updateMotorcycleSchema.validate(req.body)
+  if (error) return next(new ApiError(400, error.message))
+  next()
+}
+
+const brandSchema = Joi.object({
+  name: Joi.string().min(1).max(50).required()
 })
 
-export const validateCreatePost = (req, res, next) => {
-  const { error } = createPostSchema.validate(req.body)
-  if (error) return next(error)
+const modelSchema = Joi.object({
+  name: Joi.string().min(1).max(50).required(),
+  brand: Joi.string().required()
+})
+
+export const validateBrand = (req, res, next) => {
+  const { error } = brandSchema.validate(req.body)
+  if (error) return next(new ApiError(400, error.message))
   next()
 }
 
-export const validateUpdatePost = (req, res, next) => {
-  const { error } = updatePostSchema.validate(req.body)
-  if (error) return next(error)
+export const validateModel = (req, res, next) => {
+  const { error } = modelSchema.validate(req.body)
+  if (error) return next(new ApiError(400, error.message))
   next()
 }
+

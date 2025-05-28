@@ -5,14 +5,20 @@ import asyncHandler from '../utils/asyncHandler.js'
 import jwt from "jsonwebtoken";
 
 export const register = asyncHandler(async (req, res) => {
-  const { username, email, password } = req.body
+  const { username, email, password, phoneNumber} = req.body
 
   const existingUser = await User.findOne({ $or: [{ email }, { username }] })
   if (existingUser) {
     throw new ApiError(400, 'User already exists')
   }
 
-  const user = await User.create({ username, email, password })
+  const user = await User.create({
+    username,
+    email,
+    password,
+    phoneNumber,
+    role: 'user',
+  })
 
   const accessToken = generateAccessToken(user._id)
   const refreshToken = generateRefreshToken(user._id)
@@ -24,6 +30,8 @@ export const register = asyncHandler(async (req, res) => {
     _id: user._id,
     username: user.username,
     email: user.email,
+    phoneNumber: user.phoneNumber,
+    role: user.role,
     accessToken,
     refreshToken,
   })
@@ -52,7 +60,7 @@ export const login = asyncHandler(async (req, res) => {
   })
 })
 
-// Добавлен refreshToken controller
+
 export const refreshToken = asyncHandler(async (req, res) => {
   const { refreshToken } = req.body
   if (!refreshToken) throw new ApiError(401, 'Refresh token required')
@@ -83,13 +91,15 @@ export const profile = asyncHandler(async (req, res) => {
       throw new ApiError(404, 'User not found')
     }
 
-    // Возвращаем данные о пользователе
     res.json({
       _id: user._id,
       username: user.username,
       email: user.email,
-      avatarUrl: user.avatarUrl
+      phoneNumber: user.phoneNumber,
+      role: user.role,
+      avatarUrl: user.avatarUrl,
     })
+
   } catch (error) {
     throw new ApiError(error.statusCode, error.message)
   }

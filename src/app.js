@@ -5,8 +5,10 @@ import morgan from 'morgan'
 import connectDB from './config/db.js'
 import authRoutes from './routes/auth.routes.js'
 import errorHandler from './middleware/errorHandler.js'
-import postRoutes from "./routes/post.routes.js";
+import motorcycleRoutes from "./routes/motorcycle.routes.js";
 import userRoutes from "./routes/user.routes.js";
+import adminRoutes from "./routes/admin.routes.js";
+import chatRoutes from "./routes/chat.routes.js";
 
 const app = express()
 
@@ -21,8 +23,10 @@ connectDB()
 
 // Routes
 app.use('/api/auth', authRoutes)
-app.use('/api/posts', postRoutes)
+app.use('/api/motorcycles', motorcycleRoutes)
 app.use('/api/user', userRoutes)
+app.use('/api/admin', adminRoutes)
+app.use('/api/chat', chatRoutes)
 
 // Обработка 404
 app.use((req, res) => {

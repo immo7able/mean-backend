@@ -1,5 +1,5 @@
-import mongoose from 'mongoose'
-import bcrypt from 'bcryptjs'
+import mongoose from "mongoose";
+import bcrypt from 'bcryptjs';
 
 const userSchema = new mongoose.Schema(
     {
@@ -28,18 +28,25 @@ const userSchema = new mongoose.Schema(
             required: true,
             minlength: 6,
         },
+        phoneNumber: {
+            type: String,
+            required: true,
+            match: [/^\+?[0-9]{10,15}$/, 'Invalid phone number format'],
+        },
+        role: {
+            type: String,
+            enum: ['user', 'admin'],
+            default: 'user',
+        },
         avatarUrl: {
             type: String,
             default: null,
         },
         refreshToken: String,
     },
-    {
-        timestamps: true,
-    }
+    { timestamps: true }
 )
 
-// Hash password before saving
 userSchema.pre('save', async function (next) {
     if (!this.isModified('password')) return next()
 
@@ -48,7 +55,6 @@ userSchema.pre('save', async function (next) {
     next()
 })
 
-// Method to compare passwords
 userSchema.methods.comparePassword = async function (candidatePassword) {
     return await bcrypt.compare(candidatePassword, this.password)
 }
