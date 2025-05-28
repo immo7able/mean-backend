@@ -1,0 +1,28 @@
+version: '3.8'
+
+services:
+  backend:
+    build: ./mean-backend
+    ports:
+      - "3001:3001"
+    environment:
+      - PORT=3001
+      - MONGODB_URI=mongodb+srv://abuallabanahmad2002:PuW4TlF02sYIioqj@uni.ytrnagx.mongodb.net/motoapp?retryWrites=true&w=majority&appName=Uni
+      - JWT_ACCESS_SECRET=cfeeheg33r4rt2f2rff
+      - JWT_REFRESH_SECRET=fwfwef243f3fewfwfew
+      - ACCESS_TOKEN_EXPIRES_IN=15m
+      - REFRESH_TOKEN_EXPIRES_IN=7d
+    volumes:
+      - ./mean-backend:/usr/src/app
+    restart: always
+
+  frontend:
+    build: ./mean-frontend
+    ports:
+      - "3000:3000"
+    environment:
+      - NEXT_PUBLIC_BACKEND_URL=http://localhost:3001
+      - UPLOADTHING_TOKEN=eyJhcGlLZXkiOiJza19saXZlXzEyZTFkMmY0Mjk1NDA2NmExZDgyZmUwOTFkMDk2NzliYWIwNjQ1MGI0YzhjODU0NmEwNzMwYjRjMDEwMjEyYzciLCJhcHBJZCI6InQwbDdudW8ybXQiLCJyZWdpb25zIjpbInNlYTEiXX0=
+    restart: always
+    depends_on:
+      - backend
